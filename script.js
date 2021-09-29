@@ -34,6 +34,11 @@ const account4 = {
 
 const accounts = [account1, account2, account3, account4];
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+const currencies = new Map([
+  ['USD', 'United States dollar'],
+  ['EUR', 'Euro'],
+  ['GBP', 'Pound sterling'],
+]);
 
 // Elements
 const labelWelcome = document.querySelector('.welcome');
@@ -62,13 +67,14 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 // display Movments 
-const displayMovments = function (movement) {
+const displayMovments = function (movements, sort = false) {
   containerMovements.innerHTML = '';
-  movement.forEach(function (mov, ind) {
+  const mov = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  mov.forEach(function (mov, ind) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
     <div class="movements__row">
-    <div class="movements__type movements__type--${type}">${ind + 1}${type}</div>
+    <div class="movements__type movements__type--${type}">${ind + 1} ${type}</div>
     <div class="movements__value">${mov}Tk</div>
     </div>
     `;
@@ -130,7 +136,6 @@ btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
   const amount = Number(inputTransferAmount.value);
   const receiverAcc = accounts.find(acc => acc.name === inputTransferTo.value);
-  console.log(amount, receiverAcc);
   // input fields clean
   inputTransferTo.value = inputTransferAmount.value = '';
   // transfer Amount 
@@ -162,42 +167,11 @@ btnLoan.addEventListener('click', function (e) {
     inputLoanAmount.value = '';
   };
 });
+let sorted = false;
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+  displayMovments(corretAccount.movements, !sorted);
+  sorted = !sorted;
+});
 
-/*
-
-const deposit = movements.filter(mov => mov > 0);
-console.log(deposit);
-const withdrawal = movements.filter(mov => mov < 0);
-console.log(withdrawal);
-
-*/
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-// LECTURES
-const currencies = new Map([
-  ['USD', 'United States dollar'],
-  ['EUR', 'Euro'],
-  ['GBP', 'Pound sterling'],
-]);
-
-/*
-/////////////////////////////////////////////////
-const bangToUsd = 0.012;
-const usdToBang = 84.730;
-const bangToInd = 0.87;
-const indToBang = 1.15;
-
-const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
-//movements.map(function ());
-// const banglaToUsd = movements.map(mov => mov * bangToUsd);
-// console.log(banglaToUsd);
-const movementDescripTion = movements.map((mov, i) =>
-  `movments ${i + 1}: you ${mov > 0 ? 'deposit' : 'withdrawal'} ${Math.abs(mov)}`);
-console.log(movementDescripTion);
-const firstElement = movements.find(mov => mov < 0);
-console.log(firstElement);
-
-const account = accounts.find(acc => acc.name == 'js');
-console.log(account);
-
-*/
+////////////////-Finish-//////////////
