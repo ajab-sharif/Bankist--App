@@ -130,7 +130,9 @@ btnLogin.addEventListener('click', function (e) {
     inputLoginPin.blur();
     // update UI
     updateUi(corretAccount);
-  };
+  } else {
+    alert(`${inputLoginUsername.value} 😈 Wrong User!`);
+  }
 });
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
@@ -143,6 +145,8 @@ btnTransfer.addEventListener('click', function (e) {
     corretAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
     updateUi(corretAccount);
+  } else {
+    alert(`${inputLoginUsername.value} 😈 Wrong User!`);
   };
 });
 
@@ -154,6 +158,8 @@ btnClose.addEventListener('click', function (e) {
     // delete account 
     accounts.splice(index, 1);
     containerApp.style.opacity = 0;
+  } else {
+    alert(`${inputLoginUsername.value} 😈 Wrong User!`);
   };
   // input fields clean
   inputCloseUsername.value = inputClosePin.value = '';
