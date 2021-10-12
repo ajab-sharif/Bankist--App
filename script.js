@@ -126,11 +126,6 @@ const formatDate = (acc, date) => {
     return Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)));
   };
   const daysPass = calcDaysPass(new Date(), date);
-
-  // const day = `${date.getDate()}`.padStart(2, 0);
-  // const month = `${date.getMonth() + 1}`.padStart(2, 0);
-  // const year = `${date.getFullYear()}`.padStart(2, 0);
-
   if (daysPass === 0) return 'Today';
   if (daysPass === 1) return 'Yesterday';
   if (daysPass <= 7) return `${daysPass} Days ago`;
@@ -199,15 +194,30 @@ const createUserNames = function (acc) {
 };
 createUserNames(accounts);
 // Corrent Account
-let corretAccount;
-// // for fake logged in
-// corretAccount = account1;
-// displayMovments(corretAccount);
-// updateUi(corretAccount);
-// containerApp.style.opacity = 1;
+let corretAccount, timer;
+const StartTimerLogOut = function () {
+  const trick = () => {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(Math.trunc(time % 60)).padStart(2, 0);
+    // IN each call, print the remaining time to UI
+    labelTimer.textContent = `${min}:${sec}`;
+    // when 0 seconds, trop timer and log out user 
+    if (time === 0) {
+      clearInterval(timer);
+      containerApp.style.opacity = 0;
+      labelWelcome.textContent = `Log in to get started`;
+    };
+    // decrede 1s
+    time--;
+  };
+  // set the time //
+  let time = 120;
 
-// // --->
-
+  // call the timer every seconds
+  trick();
+  const timer = setInterval(trick, 1000);
+  return timer;
+};
 btnLogin.addEventListener('click', function (e) {
   e.preventDefault();
   corretAccount = accounts.find(acc => acc.name === inputLoginUsername.value);
@@ -229,6 +239,9 @@ btnLogin.addEventListener('click', function (e) {
     // clear input fields
     inputLoginPin.value = inputLoginUsername.value = '';
     inputLoginPin.blur();
+    // logOut Timer
+    if (timer) clearInterval(timer);
+    timer = StartTimerLogOut();
     // update UI
     updateUi(corretAccount);
   } else {
@@ -247,6 +260,10 @@ btnTransfer.addEventListener('click', function (e) {
     receiverAcc.movements.push(amount);
     corretAccount.movementsDates.push(new Date().toISOString());
     receiverAcc.movementsDates.push(new Date().toISOString());
+    // reset Timer
+    clearInterval(timer);
+    timer = StartTimerLogOut();
+    // updateUI
     updateUi(corretAccount);
   } else {
     alert(`${inputLoginUsername.value} 😈 Wrong User!`);
@@ -271,10 +288,15 @@ btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
   const amount = Number(inputLoanAmount.value);
   if (amount > 0 && corretAccount.movements.some(mov => mov >= amount * 0.1)) {
-    corretAccount.movements.push(amount);
-    corretAccount.movementsDates.push(new Date().toISOString());
-    updateUi(corretAccount);
     inputLoanAmount.value = '';
+    setTimeout(() => {
+      corretAccount.movements.push(amount);
+      corretAccount.movementsDates.push(new Date().toISOString());
+      updateUi(corretAccount);
+      // reset Timer
+      clearInterval(timer);
+      timer = StartTimerLogOut();
+    }, 2000);
   };
 });
 let sorted = false;
@@ -283,4 +305,4 @@ btnSort.addEventListener('click', function (e) {
   displayMovments(corretAccount, !sorted);
   sorted = !sorted;
 });
-////////////////-Finish-//////////////
+
